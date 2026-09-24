@@ -1,7 +1,22 @@
 [project]
 name = "bank-intent-classification"
 version = "0.1.0"
-description = "Add your description here"
+description = "BANKING77 intent classification: comparing MLP, BiLSTM, TextCNN and DistilBERT"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "gensim>=4.4.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.3",
+    "pandas>=3.0.6",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.9.1",
+    "seaborn>=0.13.2",
+    "torch>=2.14.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+]
