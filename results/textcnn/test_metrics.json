@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.9110389610389611,
+  "macro_precision": 0.9163054826778992,
+  "macro_recall": 0.9110389610389613,
+  "macro_f1": 0.9110169949319491,
+  "macro_roc_auc": 0.9989481160287083,
+  "parameters": 258977,
+  "train_time_sec": 57.41495203971863,
+  "best_epoch": 19,
+  "inference_time_total_sec": 0.5622823238372803,
+  "inference_ms_per_sentence": 0.18255919605106502,
+  "device": "cpu",
+  "num_test_sentences": 3080
+}
