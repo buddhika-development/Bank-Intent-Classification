@@ -27,7 +27,8 @@ from models.mlp.preprocessing import load_vocab
 from models.mlp.model import MLPClassifier
 from models.mlp.train import IntentDataset
 
-RESULTS_DIR = ROOT / "results" / "mlp"
+EXPERIMENT_NAME = "frozen"  # change this per experiment: "fine_tuned", "frozen"
+RESULTS_DIR = ROOT / "results" / "mlp" / "experiments" / EXPERIMENT_NAME
 
 
 def plot_learning_curves(history: dict):
@@ -89,7 +90,7 @@ def evaluate_on_test(model, test_loader, device, label_names):
 
     cm = plot_confusion_matrix(
         all_labels, all_preds, label_names,
-        title="Confusion Matrix (Test Set) - MLP",
+        title=f"Confusion Matrix (Test Set) - MLP [{EXPERIMENT_NAME}]",
         save_path=RESULTS_DIR / "confusion_matrix.png",
     )
     print_and_save_top_confusions(cm, label_names, RESULTS_DIR / "top_confusions.txt")
@@ -116,7 +117,8 @@ def main():
         num_classes=len(label_names), embedding_matrix=embedding_matrix,
         freeze_embeddings=config["freeze_embeddings"], dropout=config["dropout"],
     ).to(device)
-    model.load_state_dict(torch.load(MODEL_DIR / "best_model.pt", map_location=device))
+    model_path = MODEL_DIR / "experiments" / EXPERIMENT_NAME / "best_model.pt"
+    model.load_state_dict(torch.load(model_path, map_location=device))
     print(f"Loaded best model (val loss {config['best_val_loss']:.4f}, "
           f"{config['epochs_run']} epochs, {config['n_parameters']:,} parameters)")
 
