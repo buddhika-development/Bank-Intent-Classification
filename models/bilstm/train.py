@@ -23,6 +23,8 @@ from models.bilstm.preprocessing import build_vocab, save_vocab, load_vocab, enc
 from models.bilstm.model import BiLSTMClassifier
 
 # ---- Config: everything that defines this run, so it's reproducible ----
+EXPERIMENT_NAME = "frozen"  
+
 SEED = 42
 HIDDEN_DIM = 128
 EMBED_DIM = 100
@@ -31,9 +33,9 @@ BATCH_SIZE = 64
 LEARNING_RATE = 1e-3
 MAX_EPOCHS = 30
 PATIENCE = 4          # stop if val loss doesn't improve for this many epochs
-FREEZE_EMBEDDINGS = False
+FREEZE_EMBEDDINGS = EXPERIMENT_NAME == "frozen"
 
-RESULTS_DIR = ROOT / "results" / "bilstm"
+RESULTS_DIR = ROOT / "results" / "bilstm" / "experiments" / EXPERIMENT_NAME
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -132,7 +134,8 @@ def main():
     history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
     best_val_loss = float("inf")
     epochs_without_improvement = 0
-    best_model_path = MODEL_DIR / "best_model.pt"
+    best_model_path = MODEL_DIR / "experiments" / EXPERIMENT_NAME / "best_model.pt"
+    best_model_path.parent.mkdir(parents=True, exist_ok=True)
 
     start_time = time.time()
     for epoch in range(1, MAX_EPOCHS + 1):

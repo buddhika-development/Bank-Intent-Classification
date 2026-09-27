@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "hidden_dim": 128,
+  "embed_dim": 100,
+  "dropout": 0.3,
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "max_epochs": 30,
+  "patience": 4,
+  "freeze_embeddings": true,
+  "epochs_run": 17,
+  "training_time_seconds": 165.6,
+  "n_parameters": 400809,
+  "n_trainable_parameters": 255309,
+  "best_val_loss": 0.545149708127642
+}
