@@ -1,0 +1,16 @@
+count  true intent                                   -> predicted intent
+    5  why_verify_identity                           -> verify_my_identity
+    5  top_up_reverted                               -> top_up_failed
+    5  disposable_card_limits                        -> get_disposable_virtual_card
+    4  pin_blocked                                   -> change_pin
+    4  pending_transfer                              -> transfer_timing
+    4  pending_transfer                              -> transfer_not_received_by_recipient
+    4  fiat_currency_support                         -> exchange_via_app
+    4  card_arrival                                  -> card_delivery_estimate
+    4  card_acceptance                               -> card_not_working
+    4  balance_not_updated_after_bank_transfer       -> transfer_not_received_by_recipient
+    3  wrong_amount_of_cash_received                 -> declined_cash_withdrawal
+    3  transfer_timing                               -> balance_not_updated_after_bank_transfer
+    3  topping_up_by_card                            -> top_up_failed
+    3  top_up_reverted                               -> pending_top_up
+    3  supported_cards_and_currencies                -> fiat_currency_support
