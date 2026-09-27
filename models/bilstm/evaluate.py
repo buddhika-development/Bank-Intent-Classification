@@ -12,21 +12,20 @@ from pathlib import Path
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import (
-    accuracy_score, precision_recall_fscore_support,
-    roc_auc_score, confusion_matrix, classification_report
-)
+from torch.utils.data import DataLoader
 
 MODEL_DIR = Path(__file__).resolve().parent
 ROOT = MODEL_DIR.parents[1]
 sys.path.append(str(ROOT))
 
 from src.common.data import load_splits
+from src.common.metrics import (
+    compute_metrics, save_metrics, save_classification_report,
+    plot_confusion_matrix, print_and_save_top_confusions
+)
 from models.bilstm.preprocessing import load_vocab
 from models.bilstm.model import BiLSTMClassifier
-from models.bilstm.train import IntentDataset, MAX_EPOCHS
-from torch.utils.data import DataLoader
+from models.bilstm.train import IntentDataset
 
 RESULTS_DIR = ROOT / "results" / "bilstm"
 
@@ -70,78 +69,33 @@ def evaluate_on_test(model, test_loader, device, label_names):
 
     all_preds, all_labels, all_probs = np.array(all_preds), np.array(all_labels), np.array(all_probs)
 
-    accuracy = accuracy_score(all_labels, all_preds)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        all_labels, all_preds, average="macro", zero_division=0
-    )
-    roc_auc = roc_auc_score(all_labels, all_probs, multi_class="ovr", average="macro")
+    metrics = compute_metrics(all_labels, all_preds, all_probs)
+    metrics["inference_time_seconds"] = inference_time
+    metrics["n_test_samples"] = len(all_labels)
 
     print(f"\n{'='*50}")
     print("FINAL TEST SET RESULTS (touched once)")
     print(f"{'='*50}")
-    print(f"Accuracy:           {accuracy:.4f}")
-    print(f"Macro Precision:    {precision:.4f}")
-    print(f"Macro Recall:       {recall:.4f}")
-    print(f"Macro F1:           {f1:.4f}")
-    print(f"Macro ROC-AUC:      {roc_auc:.4f}")
+    print(f"Accuracy:           {metrics['accuracy']:.4f}")
+    print(f"Macro Precision:    {metrics['macro_precision']:.4f}")
+    print(f"Macro Recall:       {metrics['macro_recall']:.4f}")
+    print(f"Macro F1:           {metrics['macro_f1']:.4f}")
+    print(f"Macro ROC-AUC:      {metrics['macro_roc_auc']:.4f}")
     print(f"Inference time:     {inference_time:.2f}s for {len(all_labels)} sentences "
           f"({inference_time/len(all_labels)*1000:.2f}ms/sentence)")
 
-    # Save metrics
-    metrics = {
-        "accuracy": accuracy, "macro_precision": precision, "macro_recall": recall,
-        "macro_f1": f1, "macro_roc_auc": roc_auc,
-        "inference_time_seconds": inference_time, "n_test_samples": len(all_labels),
-    }
-    with open(RESULTS_DIR / "test_metrics.json", "w") as f:
-        json.dump(metrics, f, indent=2)
+    save_metrics(metrics, RESULTS_DIR / "test_metrics.json")
+    save_classification_report(all_labels, all_preds, label_names, RESULTS_DIR / "classification_report.txt")
 
-    # Full per-class report (precision/recall/F1 for each of the 77 intents)
-    report = classification_report(all_labels, all_preds, target_names=label_names, zero_division=0)
-    with open(RESULTS_DIR / "classification_report.txt", "w") as f:
-        f.write(report)
-
-    # Confusion matrix (find where the model gets confused between similar intents)
-    cm = confusion_matrix(all_labels, all_preds)
-    fig, ax = plt.subplots(figsize=(20, 18))
-    sns.heatmap(cm, cmap="Blues", ax=ax, cbar=True, square=True,
-                xticklabels=label_names, yticklabels=label_names)
-    ax.set_xlabel("Predicted"); ax.set_ylabel("True")
-    ax.set_title(f"Confusion Matrix (Test Set) \u2014 Accuracy {accuracy:.2%}")
-    plt.xticks(rotation=90, fontsize=5); plt.yticks(rotation=0, fontsize=5)
-    plt.tight_layout()
-    plt.savefig(RESULTS_DIR / "confusion_matrix.png", dpi=150)
-    plt.show()
-
-    print_top_confusions(cm, label_names)
+    cm = plot_confusion_matrix(
+        all_labels, all_preds, label_names,
+        title="Confusion Matrix (Test Set) - BiLSTM",
+        save_path=RESULTS_DIR / "confusion_matrix.png",
+    )
+    print_and_save_top_confusions(cm, label_names, RESULTS_DIR / "top_confusions.txt")
 
     return all_preds, all_labels, cm
 
-def print_top_confusions(cm, label_names, top_n=15):
-    """
-    Find the most common mistakes: (true intent, predicted intent, count) triples,
-    ignoring the diagonal (correct predictions).
-    """
-    confusions = []
-    for i in range(len(label_names)):
-        for j in range(len(label_names)):
-            if i != j and cm[i, j] > 0:
-                confusions.append((cm[i, j], label_names[i], label_names[j]))
-
-    confusions.sort(reverse=True)  # biggest count first
-
-    print(f"\n{'='*70}")
-    print(f"TOP {top_n} MOST CONFUSED PAIRS (true \u2192 predicted)")
-    print(f"{'='*70}")
-    lines = [f"{'count':>5}  {'true intent':<45} -> predicted intent"]
-    for count, true_label, pred_label in confusions[:top_n]:
-        line = f"{count:>5}  {true_label:<45} -> {pred_label}"
-        print(line)
-        lines.append(line)
-
-    with open(RESULTS_DIR / "top_confusions.txt", "w") as f:
-        f.write("\n".join(lines))
-    print(f"\nSaved: {RESULTS_DIR / 'top_confusions.txt'}")
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
