@@ -5,4 +5,7 @@ __pycache__/
 *.npy
 glove*/
 .DS_Store
-data/glove/
+data/glove/.idea/
+*.safetensors
+checkpoint-*/
+models/*/experiments/

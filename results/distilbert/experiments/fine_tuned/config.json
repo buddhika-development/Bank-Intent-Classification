@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "model_name": "distilbert-base-uncased",
+  "max_len": 64,
+  "batch_size": 32,
+  "learning_rate": 3e-05,
+  "weight_decay": 0.01,
+  "max_epochs": 10,
+  "patience": 4,
+  "freeze_encoder": false,
+  "epochs_run": 10,
+  "training_time_seconds": 6885.7,
+  "n_parameters": 67012685,
+  "n_trainable_parameters": 67012685,
+  "best_val_loss": 0.3533227741718292
+}

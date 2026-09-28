@@ -5,6 +5,8 @@ description = "BANKING77 intent classification: comparing MLP, BiLSTM, TextCNN a
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "accelerate>=1.15.0",
+    "datasets>=5.0.1",
     "gensim>=4.4.0",
     "matplotlib>=3.11.2",
     "numpy>=2.5.3",
@@ -13,6 +15,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "seaborn>=0.13.2",
     "torch>=2.14.0",
+    "transformers>=5.17.0",
 ]
 
 [dependency-groups]
