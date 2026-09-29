@@ -1,0 +1,50 @@
+{
+  "MLP": {
+    "accuracy": 0.8909090909090909,
+    "macro_precision": 0.8959314069136395,
+    "macro_recall": 0.8909090909090909,
+    "macro_f1": 0.8911344707898173,
+    "macro_roc_auc": 0.9983408450102531,
+    "n_parameters": 168361,
+    "training_time_seconds": 24.3,
+    "inference_time_seconds": 0.28939270973205566,
+    "n_test_samples": 3080,
+    "model_file_size_mb": 0.64
+  },
+  "BiLSTM": {
+    "accuracy": 0.8814935064935064,
+    "macro_precision": 0.8880290130542458,
+    "macro_recall": 0.8814935064935064,
+    "macro_f1": 0.8819793527642912,
+    "macro_roc_auc": 0.9983122223171566,
+    "n_parameters": 400809,
+    "training_time_seconds": 231.0,
+    "inference_time_seconds": 0.8687722682952881,
+    "n_test_samples": 3080,
+    "model_file_size_mb": 1.53
+  },
+  "TextCNN": {
+    "accuracy": 0.9110389610389611,
+    "macro_precision": 0.9163054826778992,
+    "macro_recall": 0.9110389610389613,
+    "macro_f1": 0.9110169949319491,
+    "macro_roc_auc": 0.9989481160287083,
+    "n_parameters": 258977,
+    "training_time_seconds": 57.41495203971863,
+    "inference_time_seconds": 0.5622823238372803,
+    "n_test_samples": 3080,
+    "model_file_size_mb": 1.02
+  },
+  "DistilBERT": {
+    "accuracy": 0.9217532467532468,
+    "macro_precision": 0.9253881554925085,
+    "macro_recall": 0.9217532467532467,
+    "macro_f1": 0.9219859114926177,
+    "macro_roc_auc": 0.9987399606971976,
+    "n_parameters": 67012685,
+    "training_time_seconds": 6885.7,
+    "inference_time_seconds": 48.419225215911865,
+    "n_test_samples": 3080,
+    "model_file_size_mb": 268.1
+  }
+}
